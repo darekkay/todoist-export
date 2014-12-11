@@ -1,0 +1,41 @@
+extends layout
+
+block content
+	div.container
+		p
+			| A small <a href="https://github.com/darekkay/todoist-export" target="_blank">open source</a> tool to backup
+			| <a href="http://todoist.com/" target="_blank">Todoist</a> data as JSON. Currently only active projects/tasks are
+			| supported.
+		p
+			| <b>Disclaimer:</b> I'm not affiliated with todoist.com. I do not take any responsibility and I'm not liable for any
+			| damage caused through use of this service.
+
+		form.form-horizontal.settings(role="form", action="todoist.json", method="post")
+
+			div.form-group
+				label.col-sm-2.control-label(for="email") Email
+				div.col-sm-10
+					input.form-control#email(type="email", placeholder="Enter email", name="email", required="true")
+
+			div.form-group
+				label.col-sm-2.control-label(for="password") Password
+				div.col-sm-10
+					input.form-control#password(type="password", placeholder="Enter password", name="password", required="true")
+
+			div.form-group
+				label.col-sm-2.control-label(for="export") Export
+				div.col-sm-10
+					div.radio
+						label
+							input(type="radio", name="export", id="exportAll", value="all", checked="checked")
+							| Everything
+				div.col-sm-offset-2.col-sm-10
+					div.radio
+						label
+							input(type="radio", name="export", id="exportTasks", value="tasks")
+							| Tasks
+
+			div.text-center
+				button.btn.btn-primary#submit(type="submit")
+					i.fa.fa-download
+					|	Backup
