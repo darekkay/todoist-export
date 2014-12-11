@@ -42,9 +42,7 @@ app.post("/todoist.json", function (req, res) {
     var exportAll = req.body.export === "all";
 
     call("API/login", {email: email, password: password}, function (err, httpResponse, body) {
-
-        throw new Error("muh");
-
+        
         if (body === "LOGIN_ERROR") {
             sendError(res, "Incorrect email or password");
             return;
