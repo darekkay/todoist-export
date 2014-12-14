@@ -8,6 +8,7 @@ var request = require('request');
 process.env['NODE_ENV'] = 'production';
 
 var app = express();
+var subdirectory = "/todoist-export";
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -16,9 +17,9 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(subdirectory, express.static(path.join(__dirname, 'public')));
 
-app.get('/', function (req, res) {
+app.get(subdirectory + '/', function (req, res) {
     res.render('index', {});
 });
 
@@ -36,7 +37,7 @@ function sendError(res, message) {
     });
 }
 
-app.post("/todoist.json", function (req, res) {
+app.post(subdirectory + "/todoist.json", function (req, res) {
     var email = req.body.email;
     var password = req.body.password;
     var exportAll = req.body.export === "all";
@@ -66,7 +67,7 @@ app.post("/todoist.json", function (req, res) {
 });
 
 app.get('*', function (req, res) {
-    res.redirect("/");
+    res.redirect(subdirectory);
 });
 
 if (app.get('env') === 'development') {
