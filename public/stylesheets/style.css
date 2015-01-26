@@ -1,5 +1,9 @@
-.settings{
+.settings {
     margin: 40px 0 20px 0;
+}
+
+#format {
+    display: none;
 }
 
 @media (min-width: 768px) {

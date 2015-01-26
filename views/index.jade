@@ -4,13 +4,13 @@ block content
 	div.container
 		p
 			| A small <a href="https://github.com/darekkay/todoist-export" target="_blank">open source</a> tool to backup
-			| <a href="http://todoist.com/" target="_blank">Todoist</a> data as JSON. Currently only active projects/tasks are
+			| <a href="http://todoist.com/" target="_blank">Todoist</a> data as JSON or CSV. Currently only active projects/tasks are
 			| supported.
 		p
 			| <b>Disclaimer:</b> I'm not affiliated with todoist.com. I do not take any responsibility and I'm not liable for any
 			| damage caused through use of this service.
 
-		form.form-horizontal.settings(role="form", action="/todoist-export/todoist.json", method="post")
+		form.form-horizontal.settings(role="form", action="/todoist-export/export", method="post")
 
 			div.form-group
 				label.col-sm-2.control-label(for="email") Email
@@ -28,12 +28,25 @@ block content
 					div.radio
 						label
 							input(type="radio", name="export", id="exportAll", value="all", checked="checked")
-							| Everything
+							| Everything (tasks, projects, settings, ...)
 				div.col-sm-offset-2.col-sm-10
 					div.radio
 						label
 							input(type="radio", name="export", id="exportTasks", value="tasks")
-							| Tasks
+							| Tasks only
+
+			div.form-group#format
+				label.col-sm-2.control-label(for="format") Format
+				div.col-sm-10
+					div.radio
+						label
+							input(type="radio", name="format", id="formatCSV", value="csv", checked="checked")
+							| CSV
+				div.col-sm-offset-2.col-sm-10
+					div.radio
+						label
+							input(type="radio", name="format", id="formatJSON", value="json")
+							| JSON
 
 			div.text-center
 				button.btn.btn-primary#submit(type="submit")
