@@ -4,6 +4,8 @@ A Node.js application to backup Todoist data as JSON. Currently only active proj
 
 ![Screenshot](screenshot.png)
 
+[Live demo](https://eclectide.com/todoist-export/)
+
 ## Installation
 
 Install required packages:
