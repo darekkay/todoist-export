@@ -60,15 +60,21 @@ app.post(subdirectory + "/export", function (req, res) {
         call("TodoistSync/v5.3/get", {api_token: token, seq_no: 0}, function (err, httpResponse, body) {
 
             if (formatCsv) {
-                csv.json2csv(replaceLabels(body.Items), function (err, csv) {
-                    if (err) {
-                        sendError(res, "CSV export error.");
-                        //TODO: log error
-                        return;
-                    }
-                    res.attachment("todoist.csv");
-                    res.send(csv);
-                });
+                try {
+                    csv.json2csv(replaceCommas(body.Items), function (err, csv) {
+                        if (err) {
+                            sendError(res, "CSV export error.");
+                            //TODO: log error
+                            return;
+                        }
+                        res.attachment("todoist.csv");
+                        res.send(csv);
+                    });
+                }
+                catch(err){
+                    sendError(res, "CSV export error.");
+                    //TODO: log error
+                }
             }
             else {
                 res.attachment("todoist.json");
@@ -79,14 +85,15 @@ app.post(subdirectory + "/export", function (req, res) {
     });
 });
 
-function replaceLabels(items) {
+function replaceCommas(items) {
 
     // TODO: convert label ids to names
     for (var key in items) {
         if (items.hasOwnProperty(key)) {
             var item = items[key];
-            // workaround for comma separated values withing csv
+            // surround columns containing comma values with quotes
             item["labels"] = '"' + item["labels"].toString() + '"';
+            item["content"] = '"' + item["content"].toString() + '"';
         }
     }
     return items;
