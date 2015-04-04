@@ -27,13 +27,13 @@ block content
 				div.col-sm-10
 					div.radio
 						label
-							input(type="radio", name="export", id="exportAll", value="all", checked="checked")
-							| Everything (tasks, projects, settings, ...)
+							input(type="radio", name="export", id="exportTasks", value="tasks", checked="checked")
+							| Tasks only
 				div.col-sm-offset-2.col-sm-10
 					div.radio
 						label
-							input(type="radio", name="export", id="exportTasks", value="tasks")
-							| Tasks only
+							input(type="radio", name="export", id="exportAll", value="all")
+							| Everything (tasks, projects, settings, ...)
 
 			div.form-group#format
 				label.col-sm-2.control-label(for="format") Format
