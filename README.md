@@ -1,6 +1,6 @@
 # Todoist Export
 
-A Node.js application to backup Todoist data as JSON. Currently only active projects/tasks are supported.
+A Node.js application to backup Todoist data as JSON or CSV. Currently only active projects/tasks are supported.
 
 ![Screenshot](screenshot.png)
 
