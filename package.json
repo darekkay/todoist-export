@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Backup Todoist data as JSON",
   "author": "Darek Kay",
-  "homepage": "http://www.eclectide.com",
+  "homepage": "https://darekkay.com",
   "private": true,
   "repository": {
     "type": "git",
