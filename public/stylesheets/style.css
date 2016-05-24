@@ -2,6 +2,10 @@
     margin: 40px 0 20px 0;
 }
 
+.footer { 
+    text-align: center 
+}
+
 @media (min-width: 768px) {
     .container {
         width: 750px;

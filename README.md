@@ -18,6 +18,6 @@ Start server:
 
 ## License
 
-Copyright 2014 Darek Kay <darekkay@eclectide.com>  
+Copyright 2014-2016 Darek Kay <darekkay@gmail.com>  
 
 This project and its contents are open source under the [MIT license](LICENSE).
