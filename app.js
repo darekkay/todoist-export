@@ -1,3 +1,5 @@
+var config = require('./config');
+
 var express = require('express');
 var path = require('path');
 var logger = require('morgan');
@@ -6,6 +8,14 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var csv = require('json-2-csv');
 
+var oauth2 = require('simple-oauth2')({
+    clientID: config.client_id,
+    clientSecret: config.client_secret,
+    site: 'https://todoist.com',
+    tokenPath: '/oauth/access_token',
+    authorizationPath: '/oauth/authorize'
+});
+
 process.env['NODE_ENV'] = 'production';
 
 var app = express();
@@ -13,6 +23,7 @@ var subdirectory = "/todoist-export";
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
+app.set('json spaces', 2); // prettify json output
 
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -20,13 +31,13 @@ app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.use(subdirectory, express.static(path.join(__dirname, 'public')));
 
-app.get(subdirectory + '/', function (req, res) {
+app.get(subdirectory + '/', (req, res) => {
     res.render('index', {});
 });
 
 function call(api, parameters, callback) {
     request.post({
-        url: "https://api.todoist.com/" + api,
+        url: "https://todoist.com/API/v7/" + api,
         form: parameters,
         json: true
     }, callback)
@@ -38,52 +49,76 @@ function sendError(res, message) {
     });
 }
 
-app.post(subdirectory + "/export", function (req, res) {
-    var email = req.body.email;
-    var password = req.body.password;
-    var exportAll = req.body.export === "all";
-    var formatCsv = !exportAll && req.body.format === "csv";
+app.post(subdirectory + "/auth", (req, res) => {
 
-    call("API/login", {email: email, password: password}, function (err, httpResponse, body) {
+  var format = req.body.format; // csv vs. json
 
-        if (body === "LOGIN_ERROR") {
-            sendError(res, "Incorrect email or password");
-            return;
-        }
-
-        var token = body["api_token"];
-        if (token === undefined) {
-            sendError(res, "Couldn't get API token");
-            return;
-        }
-
-        call("TodoistSync/v5.3/get", {api_token: token, seq_no: 0}, function (err, httpResponse, body) {
-
-            if (formatCsv) {
-                try {
-                    csv.json2csv(replaceCommas(body.Items), function (err, csv) {
-                        if (err) {
-                            sendError(res, "CSV export error.");
-                            //TODO: log error
-                            return;
-                        }
-                        res.attachment("todoist.csv");
-                        res.send(csv);
-                    });
-                }
-                catch(err){
-                    sendError(res, "CSV export error.");
-                    //TODO: log error
-                }
-            }
-            else {
-                res.attachment("todoist.json");
-                var output = exportAll ? body : body.Items;
-                res.json(output);
-            }
-        });
-    });
+  res.redirect(oauth2.authCode.authorizeURL({
+    scope: 'data:read',
+    state: format
+  }));
 });
+
+app.get(subdirectory + '/export', (req, res) => {
+  var code = req.query.code;
+
+  oauth2.authCode.getToken({
+    code: code
+  }, (err, result) => {
+
+    if (err) return sendError(res, err);
+
+    var token = result["access_token"];
+    var format = req.query.format;
+    
+    exportData(res, token, format);
+  });
+});
+
+function exportData(res, token, format) {
+
+  call('sync', {
+    token: token,
+    sync_token: '*',
+    resource_types: '["all"]'
+  }, (err, http, syncData) => {
+    
+    if (err) return sendError(res, err);
+    
+    call('completed/get_all', {token: token}, (err, http, completedData) => {
+
+      if (err) return sendError(res, err);
+      
+      syncData.completed = completedData; // add completed tasks
+      
+      if(format === 'json') {
+        res.attachment("todoist.json");
+        res.json(syncData);
+      }
+          
+      else if (format === 'csv') {
+        try {
+          csv.json2csv(replaceCommas(syncData.items), (err, csv) => {
+            if (err) {
+              return sendError(res, "CSV export error.");
+            }
+            res.attachment("todoist.csv");
+            res.send(csv);
+          });
+        }
+        catch(err){
+          return sendError(res, "CSV export error.");
+        }
+      }
+          
+      else {
+        return sendError(res, "Unknown format: " + format);
+      }
+    });
+
+  });
+
+}
 
 function replaceCommas(items) {
 

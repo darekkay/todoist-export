@@ -1,20 +1,26 @@
 # Todoist Export
 
-A Node.js application to backup Todoist data as JSON or CSV. Currently only active projects/tasks are supported.
+A Node.js application to backup Todoist data as JSON or CSV. Currently archived projects are not supported.
 
 ![Screenshot](screenshot.png)
 
 [Live demo](https://darekkay.com/todoist-export/)
 
-## Installation
+## Development
 
-Install required packages:
+1. Create a [Todoist App](https://developer.todoist.com/appconsole.html).
 
-    npm install
+2. Copy `config.js.example` to `config.js` and fill in the id and secret from the created app.
 
-Start server:
+3. Install required packages:
 
-    npm start
+       npm install
+
+4. Start server:
+
+       npm start
+
+Refer to the [API](https://developer.todoist.com/) for more information.
 
 ## License
 
