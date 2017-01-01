@@ -24,6 +24,6 @@ Refer to the [API](https://developer.todoist.com/) for more information.
 
 ## License
 
-Copyright 2014-2016 Darek Kay <darekkay@gmail.com>  
+Copyright 2014-2017 Darek Kay <hello@darekkay.com>  
 
 This project and its contents are open source under the [MIT license](LICENSE).
