@@ -5,6 +5,15 @@ var config = require('../config');
 
 app.set('port', config.port);
 
-var server = app.listen(app.get('port'), function() {
-  debug('Express server listening on port ' + server.address().port);
-});
+if (config.ssl) {
+  // Run HTTPS server
+  require('https').createServer(config.ssl, app).listen(config.port, function() {
+    debug('Server running at https://localhost:' + config.port);
+  });
+}
+else {
+  // Run HTTP server
+  app.listen(app.get('port'), function() {
+    debug('Server running at http://localhost:' + config.port);
+  });
+}

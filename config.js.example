@@ -4,4 +4,13 @@ module.exports = {
   port: process.env['PORT'] || 3000,
   client_id: 'CLIENT_ID',
   client_secret: 'CLIENT_SECRET'
+  
+  // Run Todoist Export as HTTPS server
+  /*
+   ssl: {
+   cert: fs.readFileSync('./ssl/fullchain.pem'),
+   key: fs.readFileSync('./ssl/privkey.pem'),
+   passphrase: 'ssl certificate passphrase'
+   }
+  */
 };
