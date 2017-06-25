@@ -5,7 +5,7 @@ var fs = require('fs');
 module.exports = {
   port: process.env['PORT'] || 3000,
   client_id: 'CLIENT_ID',
-  client_secret: 'CLIENT_SECRET'
+  client_secret: 'CLIENT_SECRET',
   
   // Run Todoist Export as HTTPS server
   /*
