@@ -1,5 +1,7 @@
 'use strict';
 
+var fs = require('fs');
+
 module.exports = {
   port: process.env['PORT'] || 3000,
   client_id: 'CLIENT_ID',
