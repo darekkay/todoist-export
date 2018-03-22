@@ -1,4 +1,4 @@
-# Todoist Export
+# Export for Todoist
 
 A Node.js application to backup Todoist data as JSON or CSV. Currently archived projects are not supported.
 
@@ -26,7 +26,7 @@ Refer to the [API](https://developer.todoist.com/) for more information.
 
 ### Configure SSL
 
-Todoist started to redirect to a HTTPS version of your OAuth Redirect URL, even if a HTTP URL was defined. To retrieve your Todoist backup, you can change the URL from HTTPS to HTTP in the browser address bar after authorization. You can also start Todoist Export as HTTPS server, after creating a self-signed SSL certificate and defining your certificate data in `config.js`:
+Todoist started to redirect to a HTTPS version of your OAuth Redirect URL, even if a HTTP URL was defined. To retrieve your Todoist backup, you can change the URL from HTTPS to HTTP in the browser address bar after authorization. You can also start the app as HTTPS server, after creating a self-signed SSL certificate and defining your certificate data in `config.js`:
  
 ```
 ssl: {
@@ -38,6 +38,6 @@ ssl: {
 
 ## License
 
-Copyright 2014-2017 Darek Kay <hello@darekkay.com>  
+Copyright 2014-2018 Darek Kay <hello@darekkay.com>  
 
 This project and its contents are open source under the [MIT license](LICENSE).
