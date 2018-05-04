@@ -15,3 +15,7 @@ body {
         width: 750px;
     }
 }
+
+.navbar-default .navbar-brand {
+    color: #696969;
+}
