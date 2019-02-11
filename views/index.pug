@@ -4,12 +4,22 @@ block content
 	main.container
 		p
 			| A small <a href="https://github.com/darekkay/todoist-export" target="_blank" rel="noopener">open source</a> tool to backup
-			| <a href="http://todoist.com/" target="_blank" rel="noopener">Todoist</a> data as JSON or CSV. Currently archived projects are
+			| <a href="http://todoist.com/" target="_blank" rel="noopener">Todoist</a> data as JSON or CSV. Archived projects are currently
 			| not supported.
 		p
 			| <b>Disclaimer:</b> Export for Todoist is not created by, affiliated with, or supported by Doist. I do not take any responsibility and I'm not liable for any damage caused through use of this service.
 
-		form.form-horizontal.settings(role="form", action="/todoist-export/auth", method="post")
+		form.form-horizontal.settings(role="form", action="/todoist-export/auth-and-show", method="post")
+
+			div.text-center
+				button.btn.btn-info#submit(type="submit")
+					i.fa.fa-link
+					|	Get Persistent Backup URL
+          
+			div.text-center
+				input(type="text", name="persistentBackupUrl", id="persistentBackupUrl", value="", style="display: none; margin: 10px auto 0px auto; width: 320px;", readonly)
+          
+		form.form-horizontal.settings(role="form", action="/todoist-export/auth-and-download", method="post")
 
 			div.form-group#format
 				label.col-sm-2.control-label(for="format") Export as
@@ -39,4 +49,17 @@ block content
 			if (params.code) {
 				window.location.replace('/todoist-export/export?code=' + params.code + '&format=' + params.state);
 			}
+			
+			if (params.code) {
+				if (params.state == "auth-and-show") {
+					window.location.replace('/todoist-export/show-token?code=' + params.code);
+				}
+				else {
+					window.location.replace('/todoist-export/export?code=' + params.code + '&format=' + params.state);	
+				}
+      			}      
+			if (params.token) {
+				document.querySelector('#persistentBackupUrl').style.display = 'block';
+				document.querySelector('#persistentBackupUrl').value = window.location.href.split('?')[0] + "download?token=" + params.token + "&format=json";
+			}			
 		}
