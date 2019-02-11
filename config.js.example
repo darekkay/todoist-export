@@ -7,7 +7,7 @@ module.exports = {
   client_id: 'CLIENT_ID',
   client_secret: 'CLIENT_SECRET',
   
-  // Run Todoist Export as HTTPS server
+  // Run as HTTPS server
   /*
    ssl: {
    cert: fs.readFileSync('./ssl/fullchain.pem'),

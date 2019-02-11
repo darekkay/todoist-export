@@ -22,7 +22,7 @@ var app = express();
 var subdirectory = "/todoist-export";
 
 app.set('views', path.join(__dirname, 'views'));
-app.set('view engine', 'jade');
+app.set('view engine', 'pug');
 app.set('json spaces', 2); // prettify json output
 
 app.use(logger('dev'));
@@ -70,7 +70,7 @@ app.get(subdirectory + '/export', (req, res) => {
 
     var token = result["access_token"];
     var format = req.query.format;
-    
+
     exportData(res, token, format);
   });
 });
@@ -82,20 +82,20 @@ function exportData(res, token, format) {
     sync_token: '*',
     resource_types: '["all"]'
   }, (err, http, syncData) => {
-    
+
     if (err) return sendError(res, err);
-    
+
     call('completed/get_all', {token: token}, (err, http, completedData) => {
 
       if (err) return sendError(res, err);
-      
+
       syncData.completed = completedData; // add completed tasks
-      
+
       if(format === 'json') {
         res.attachment("todoist.json");
         res.json(syncData);
       }
-          
+
       else if (format === 'csv') {
         try {
           csv.json2csv(replaceCommas(syncData.items), (err, csv) => {
@@ -110,7 +110,7 @@ function exportData(res, token, format) {
           return sendError(res, "CSV export error.");
         }
       }
-          
+
       else {
         return sendError(res, "Unknown format: " + format);
       }

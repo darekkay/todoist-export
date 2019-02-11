@@ -1,16 +1,16 @@
-div.navbar.navbar-default.navbar-static-top(role='navigation')
+nav.navbar.navbar-default.navbar-static-top
 	div.container
 		div.navbar-header
-			button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse')
+			button.navbar-toggle(type='button', data-toggle='collapse', data-target='.navbar-collapse', aria-label='Toggle menu')
 				span.icon-bar
 				span.icon-bar
 				span.icon-bar
 			a.navbar-brand(href="/todoist-export/")
-				| Todoist Export
+				| Export for Todoist
 		div.collapse.navbar-collapse
 			ul.nav.navbar-nav.navbar-right
 				li
-					a(href="https://github.com/darekkay/todoist-export", target="_blank")
+					a(href="https://github.com/darekkay/todoist-export", target="_blank", rel="noopener")
 						i.fa.fa-github-alt
 						|	GitHub
 				li
