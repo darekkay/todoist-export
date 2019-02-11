@@ -3,11 +3,16 @@ body {
 }
 
 .settings {
-    margin: 40px 0 20px 0;
+    margin: 40px 0 30px 0;
 }
 
-.footer { 
-    text-align: center 
+#persistentBackup {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.footer {
+    text-align: center
 }
 
 @media (min-width: 768px) {

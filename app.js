@@ -6,7 +6,7 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var request = require('request');
-var csv = require('json-2-csv');
+var csvParser = require('json-2-csv');
 
 var oauth2 = require('simple-oauth2')({
     clientID: config.client_id,
@@ -71,8 +71,12 @@ app.get(subdirectory + '/export', (req, res) => {
     var token = result["access_token"];
     var format = req.query.format;
 
-    exportData(res, token, format);
+    res.redirect(subdirectory + "?token=" + token + "&format=" + format);
   });
+});
+
+app.get(subdirectory + '/download', (req, res) => {
+  exportData(res, req.query.token, req.query.format);
 });
 
 function exportData(res, token, format) {
@@ -98,7 +102,7 @@ function exportData(res, token, format) {
 
       else if (format === 'csv') {
         try {
-          csv.json2csv(replaceCommas(syncData.items), (err, csv) => {
+          csvParser.json2csv(replaceCommas(syncData.items), (err, csv) => {
             if (err) {
               return sendError(res, "CSV export error.");
             }

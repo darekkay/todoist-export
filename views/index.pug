@@ -28,6 +28,14 @@ block content
 				button.btn.btn-primary#submit(type="submit")
 					i.fa.fa-download
 					|	Authorize & Backup
+
+
+		div.text-center(id="persistentBackup", style="display: none;")
+			p
+				| To automate your backups (e.g. via a cron job), use the following link:
+			a(id="persistentBackupUrl")
+
+
 	script.
 		window.onload = function() {
 			var params = {};
@@ -38,5 +46,12 @@ block content
 
 			if (params.code) {
 				window.location.replace('/todoist-export/export?code=' + params.code + '&format=' + params.state);
+			}
+			else if (params.token) {
+				document.querySelector('#persistentBackup').style.display = 'block';
+				var persistentBackupUrl = window.location.href.split('?')[0] + "download?token=" + params.token + "&format=" + params.format;
+				document.querySelector('#persistentBackupUrl').href = persistentBackupUrl;
+				document.querySelector('#persistentBackupUrl').innerText = persistentBackupUrl;
+				window.location.replace(persistentBackupUrl);
 			}
 		}
