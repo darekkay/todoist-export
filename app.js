@@ -49,7 +49,7 @@ function sendError(res, message) {
     });
 }
 
-app.post(subdirectory + "/auth", (req, res) => {
+app.post(subdirectory + "/auth-and-download", (req, res) => {
 
   var format = req.body.format; // csv vs. json
 
@@ -57,6 +57,26 @@ app.post(subdirectory + "/auth", (req, res) => {
     scope: 'data:read',
     state: format
   }));
+});
+
+app.post(subdirectory + "/auth-and-show", (req, res) => {
+  res.redirect(oauth2.authCode.authorizeURL({
+    scope: 'data:read',
+    state: 'auth-and-show'
+  }));
+});
+
+app.get(subdirectory + '/show-token', (req, res) => {
+  var code = req.query.code;
+
+  oauth2.authCode.getToken({
+    code: code
+  }, (err, result) => {
+    if (err) return sendError(res, err);
+
+    var token = result["access_token"];
+    res.redirect(subdirectory + "?token=" + token);
+  });
 });
 
 app.get(subdirectory + '/export', (req, res) => {
@@ -73,6 +93,10 @@ app.get(subdirectory + '/export', (req, res) => {
 
     exportData(res, token, format);
   });
+});
+
+app.get(subdirectory + '/download', (req, res) => {
+    exportData(res, req.query.token, req.query.format);
 });
 
 function exportData(res, token, format) {
