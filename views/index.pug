@@ -1,57 +1,38 @@
 extends layout
 
 block content
-	main.container
-		p
-			| A small <a href="https://github.com/darekkay/todoist-export" target="_blank" rel="noopener">open source</a> tool to backup
-			| <a href="http://todoist.com/" target="_blank" rel="noopener">Todoist</a> data as JSON or CSV. Currently archived projects are
-			| not supported.
-		p
-			| <b>Disclaimer:</b> Export for Todoist is not created by, affiliated with, or supported by Doist. I do not take any responsibility and I'm not liable for any damage caused through use of this service.
+  main
+    p
+      | A small <a href="https://github.com/darekkay/todoist-export" target="_blank" rel="noopener">open source</a> tool to backup
+      | <a href="http://todoist.com/" target="_blank" rel="noopener">Todoist</a> data as JSON or CSV.
+    p
+      | <b>Disclaimer:</b> Export for Todoist is not created by, affiliated with, or supported by Doist. I do not take any responsibility and I'm not liable for any damage caused through use of this service.
 
-		form.form-horizontal.settings(role="form", action="/todoist-export/auth", method="post")
+    div.form-wrapper
+      form(role="form", action="/todoist-export/auth", method="post")
 
-			div.form-group#format
-				label.col-sm-2.control-label(for="format") Export as
-				div.col-sm-10
-					div.radio
-						label
-							input(type="radio", name="format", id="formatCSV", value="csv", checked="checked")
-							| CSV (only tasks)
-				div.col-sm-offset-2.col-sm-10
-					div.radio
-						label
-							input(type="radio", name="format", id="formatJSON", value="json")
-							| JSON (all data)
+        div.form-group#format
+          label(for="format")
+            strong Export as:
+          div.radios
+            div.radio
+              label
+                input(type="radio", name="format", id="formatCSV", value="csv", checked="checked")
+                | CSV (only tasks)
+            div.radio
+              label
+                input(type="radio", name="format", id="formatJSON", value="json")
+                | JSON (all data)
 
-			div.text-center
-				button.btn.btn-primary#submit(type="submit")
-					i.fa.fa-download
-					|	Authorize & Backup
-
-
-		div.text-center(id="persistentBackup", style="display: none;")
-			p
-				| To automate your backups (e.g. via a cron job), use the following link:
-			a(id="persistentBackupUrl")
+        div.text-center
+          button#submit(type="submit")
+            | Authorize & Backup
 
 
-	script.
-		window.onload = function() {
-			var params = {};
-			location.search.substr(1).split("&").forEach(function (item) {
-				var pair = item.split("="), key = pair[0], value = pair[1] && decodeURIComponent(pair[1]);
-				(params[key] = params[key] || []).push(value)
-			})
+    div.text-center(id="persistentBackup", style="display: none;")
+      p
+        | To automate your backups (e.g. via a cron job), use the following link:
+      a(id="persistentBackupUrl")
 
-			if (params.code) {
-				window.location.replace('/todoist-export/export?code=' + params.code + '&format=' + params.state);
-			}
-			else if (params.token) {
-				document.querySelector('#persistentBackup').style.display = 'block';
-				var persistentBackupUrl = window.location.href.split('?')[0] + "download?token=" + params.token + "&format=" + params.format;
-				document.querySelector('#persistentBackupUrl').href = persistentBackupUrl;
-				document.querySelector('#persistentBackupUrl').innerText = persistentBackupUrl;
-				window.location.replace(persistentBackupUrl);
-			}
-		}
+
+  script(src='js/client.js')
