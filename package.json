@@ -16,7 +16,8 @@
     }
   ],
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "format": "prettier --write -- \"{src,bin,public}/**/*.{js,jsx,json,css,scss,md}\""
   },
   "dependencies": {
     "body-parser": "1.19.0",
@@ -24,6 +25,7 @@
     "express": "4.16.4",
     "json-2-csv": "3.5.3",
     "morgan": "1.9.1",
+    "prettier": "1.16.4",
     "pug": "2.0.3",
     "request": "2.88.0",
     "simple-oauth2": "2.2.1"

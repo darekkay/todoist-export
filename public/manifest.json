@@ -1,13 +1,13 @@
 {
-    "name": "Export for Todoist",
-    "icons": [
-        {
-            "src": "/todoist-export/favicon-192.png",
-            "sizes": "192x192",
-            "type": "image/png"
-        }
-    ],
-    "theme_color": "#2196F3",
-    "background_color": "#ffffff",
-    "display": "standalone"
+  "name": "Export for Todoist",
+  "icons": [
+    {
+      "src": "/todoist-export/favicon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#2196F3",
+  "background_color": "#ffffff",
+  "display": "standalone"
 }
