@@ -1,14 +1,14 @@
-var config = require("./config");
+const config = require("./config");
 
-var express = require("express");
-var path = require("path");
-var logger = require("morgan");
-var cookieParser = require("cookie-parser");
-var bodyParser = require("body-parser");
-var request = require("request");
-var csvParser = require("json-2-csv");
+const express = require("express");
+const path = require("path");
+const logger = require("morgan");
+const cookieParser = require("cookie-parser");
+const bodyParser = require("body-parser");
+const request = require("request");
+const csvParser = require("json-2-csv");
 
-var oauth2 = require("simple-oauth2").create({
+const oauth2 = require("simple-oauth2").create({
   client: {
     id: config.client_id,
     secret: config.client_secret
@@ -25,8 +25,8 @@ var oauth2 = require("simple-oauth2").create({
 
 process.env["NODE_ENV"] = "production";
 
-var app = express();
-var subdirectory = "/todoist-export";
+const app = express();
+const subdirectory = "/todoist-export";
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
@@ -60,7 +60,7 @@ function sendError(res, message) {
 }
 
 app.post(subdirectory + "/auth", (req, res) => {
-  var format = req.body.format; // csv vs. json
+  const format = req.body.format; // csv vs. json
 
   res.redirect(
     oauth2.authorizationCode.authorizeURL({
@@ -71,15 +71,15 @@ app.post(subdirectory + "/auth", (req, res) => {
 });
 
 app.get(subdirectory + "/export", (req, res) => {
-  var code = req.query.code;
+  const code = req.query.code;
 
   oauth2.authorizationCode
     .getToken({
       code: code
     })
     .then(result => {
-      var token = result["access_token"];
-      var format = req.query.format;
+      const token = result["access_token"];
+      const format = req.query.format;
 
       res.redirect(subdirectory + "?token=" + token + "&format=" + format);
     })
@@ -135,9 +135,9 @@ function exportData(res, token, format) {
 
 function replaceCommas(items) {
   // TODO: convert label ids to names
-  for (var key in items) {
+  for (const key in items) {
     if (items.hasOwnProperty(key)) {
-      var item = items[key];
+      const item = items[key];
       // surround columns containing comma values with quotes
       item["labels"] = '"' + item["labels"].toString() + '"';
       item["content"] = '"' + item["content"].toString() + '"';
@@ -151,7 +151,7 @@ app.get("*", function(req, res) {
 });
 
 if (app.get("env") === "development") {
-  app.use(function(err, req, res, next) {
+  app.use(function(err, req, res) {
     res.status(err.status || 500);
     res.render("error", {
       message: err.message,
@@ -160,7 +160,7 @@ if (app.get("env") === "development") {
   });
 }
 
-app.use(function(err, req, res, next) {
+app.use(function(err, req, res) {
   res.status(err.status || 500);
   res.render("error", {
     message: err.message
