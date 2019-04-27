@@ -36,7 +36,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.use(subdirectory, express.static(path.join(__dirname, 'public')));
+app.use(subdirectory, express.static(path.join(__dirname, '..', 'public')));
 
 app.get(subdirectory + '/', (req, res) => {
     res.render('index', {});
