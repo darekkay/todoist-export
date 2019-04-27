@@ -8,12 +8,19 @@ var bodyParser = require('body-parser');
 var request = require('request');
 var csvParser = require('json-2-csv');
 
-var oauth2 = require('simple-oauth2')({
-    clientID: config.client_id,
-    clientSecret: config.client_secret,
-    site: 'https://todoist.com',
-    tokenPath: '/oauth/access_token',
-    authorizationPath: '/oauth/authorize'
+var oauth2 = require('simple-oauth2').create({
+    client: {
+      id: config.client_id,
+      secret: config.client_secret,
+    },
+    auth: {
+      tokenHost : 'https://todoist.com',
+      tokenPath: '/oauth/access_token',
+      authorizePath : '/oauth/authorize'
+    },
+    options: {
+     authorizationMethod: 'body',
+    }
 });
 
 process.env['NODE_ENV'] = 'production';
@@ -53,7 +60,7 @@ app.post(subdirectory + "/auth", (req, res) => {
 
   var format = req.body.format; // csv vs. json
 
-  res.redirect(oauth2.authCode.authorizeURL({
+  res.redirect(oauth2.authorizationCode.authorizeURL({
     scope: 'data:read',
     state: format
   }));
@@ -62,17 +69,15 @@ app.post(subdirectory + "/auth", (req, res) => {
 app.get(subdirectory + '/export', (req, res) => {
   var code = req.query.code;
 
-  oauth2.authCode.getToken({
+  oauth2.authorizationCode.getToken({
     code: code
-  }, (err, result) => {
-
-    if (err) return sendError(res, err);
+  }).then((result) => {
 
     var token = result["access_token"];
     var format = req.query.format;
 
     res.redirect(subdirectory + "?token=" + token + "&format=" + format);
-  });
+  }).catch((err) =>  sendError(res, err));
 });
 
 app.get(subdirectory + '/download', (req, res) => {
