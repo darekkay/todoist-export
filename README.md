@@ -14,13 +14,13 @@ A Node.js application to backup Todoist data as JSON or CSV. Currently archived 
 
 2. Copy `config.js.example` to `config.js` and fill in the id and secret from the created app.
 
-3. Install required packages:
+3. Install required packages (you can use `npm` instead of `yarn`):
 
-   npm install
+   yarn install
 
 4. Start server:
 
-   npm start
+   yarn start
 
 Refer to the [API](https://developer.todoist.com/) for more information.
 
