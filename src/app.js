@@ -45,7 +45,7 @@ app.get(subdirectory + "/", (req, res) => {
 function call(api, parameters, callback) {
   request.post(
     {
-      url: "https://todoist.com/API/v7/" + api,
+      url: "https://todoist.com/API/v8/" + api,
       form: parameters,
       json: true
     },

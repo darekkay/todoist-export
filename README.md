@@ -12,7 +12,7 @@ A Node.js application to backup Todoist data as JSON or CSV. Currently archived 
 
 1. Create a [Todoist App](https://developer.todoist.com/appconsole.html). On localhost use `http://localhost:3000/todoist-export/` for both "App Service URL" and "OAuth Redirect URL".
 
-2. Copy `config.js.example` to `config.js` and fill in the id and secret from the created app.
+2. Copy `src/config.js.example` to `src/config.js` and fill in the id and secret from the created app.
 
 3. Install required packages (you can use `npm` instead of `yarn`):
 
