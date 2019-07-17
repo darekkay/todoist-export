@@ -23,10 +23,10 @@
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.4",
     "express": "4.17.1",
-    "json-2-csv": "3.5.4",
+    "json-2-csv": "3.5.5",
     "morgan": "1.9.1",
-    "prettier": "1.17.1",
-    "pug": "2.0.3",
+    "prettier": "1.18.2",
+    "pug": "2.0.4",
     "request": "2.88.0",
     "simple-oauth2": "2.2.1"
   }
