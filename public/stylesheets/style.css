@@ -26,7 +26,6 @@ body {
   padding: 0;
   display: flex;
   flex-direction: column;
-  justify-content: stretch;
   color: #2b3236;
 }
 
@@ -65,15 +64,16 @@ hr {
 }
 
 main {
-  flex: 1;
+  flex: 1 0 auto;
   width: 100%;
   max-width: 800px;
   margin: 4rem auto;
-  padding: 1rem 2.5rem;
+  padding: 0 2.5rem;
 }
 
 header,
 footer {
+  flex: none;
   display: flex;
   justify-content: center;
   align-items: center;
