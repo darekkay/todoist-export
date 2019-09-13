@@ -1,13 +1,19 @@
 {
+  "short_name": "Export for Todoist",
   "name": "Export for Todoist",
   "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "48x48 32x32 16x16",
+      "type": "image/x-icon"
+    },
     {
       "src": "/todoist-export/favicon-192.png",
       "sizes": "192x192",
       "type": "image/png"
     }
   ],
-  "theme_color": "#2196F3",
+  "theme_color": "#2196f3",
   "background_color": "#ffffff",
-  "display": "standalone"
+  "display": "fullscreen"
 }
