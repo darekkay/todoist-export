@@ -101,7 +101,7 @@ function exportData(res, token, format) {
     (err, http, syncData) => {
       if (err) return sendError(res, err);
       if (syncData === undefined) {
-        console.error("Could not fetch data from Todoist.", http);
+        console.error("Could not fetch data from Todoist.");
         return sendError(res, "Could not fetch data from Todoist.");
       }
 
