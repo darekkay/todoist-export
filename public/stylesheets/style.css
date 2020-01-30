@@ -56,7 +56,10 @@ h2 {
   font-weight: 600;
 }
 
-h2 { font-size: 2.4rem; margin-top: 4rem; }
+h2 {
+  font-size: 2.4rem;
+  margin-top: 4rem;
+}
 
 hr {
   border: none;

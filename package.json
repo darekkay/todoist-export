@@ -1,33 +1,30 @@
 {
   "name": "todoist-export",
-  "version": "1.2.0",
   "description": "Backup Todoist data as JSON or CSV",
-  "author": "Darek Kay",
-  "homepage": "https://darekkay.com",
-  "private": true,
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/darekkay/todoist-export.git"
-  },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://raw.github.com/darekkay/todoist-export/master/LICENSE"
-    }
-  ],
-  "scripts": {
-    "start": "node src/index.js",
-    "format": "prettier --write -- \"{src,bin,public}/**/*.{js,jsx,json,css,scss,md}\""
-  },
+  "version": "1.2.0",
+  "author": "Darek Kay <hello@darekkay.com> (https://darekkay.com/)",
   "dependencies": {
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.4",
     "express": "4.17.1",
     "json-2-csv": "3.5.5",
     "morgan": "1.9.1",
-    "prettier": "1.18.2",
     "pug": "2.0.4",
     "request": "2.88.0",
     "simple-oauth2": "2.2.1"
+  },
+  "devDependencies": {
+    "prettier": "1.18.2"
+  },
+  "homepage": "https://darekkay.com/todoist-export/",
+  "license": "MIT",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/darekkay/todoist-export.git"
+  },
+  "scripts": {
+    "format": "prettier --write -- \"{src,bin,public}/**/*.{js,jsx,json,css,scss,md}\"",
+    "start": "node src/index.js"
   }
 }
