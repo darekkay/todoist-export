@@ -23,7 +23,7 @@ const oauth2 = require("simple-oauth2").create({
   }
 });
 
-process.env["NODE_ENV"] = "production";
+const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 const app = express();
 const subdirectory = "/todoist-export";
@@ -53,11 +53,13 @@ function call(api, parameters, callback) {
   );
 }
 
-function sendError(res, message) {
+const renderErrorPage = (res, message, error) => {
+  res.status((error && error.status) || 500);
   res.render("error", {
-    message: message
+    message,
+    error
   });
-}
+};
 
 app.post(subdirectory + "/auth", (req, res) => {
   const format = req.body.format; // csv vs. json
@@ -83,7 +85,7 @@ app.get(subdirectory + "/export", (req, res) => {
 
       res.redirect(subdirectory + "?token=" + token + "&format=" + format);
     })
-    .catch(err => sendError(res, err));
+    .catch(err => renderErrorPage(res, err));
 });
 
 app.get(subdirectory + "/download", (req, res) => {
@@ -99,17 +101,17 @@ function exportData(res, token, format) {
       resource_types: '["all"]'
     },
     (err, http, syncData) => {
-      if (err) return sendError(res, err);
+      if (err) return renderErrorPage(res, err);
       if (syncData === undefined) {
         console.error("Could not fetch data from Todoist.");
-        return sendError(res, "Could not fetch data from Todoist.");
+        return renderErrorPage(res, "Could not fetch data from Todoist.");
       }
 
       call(
         "completed/get_all",
         { token: token },
         (err, http, completedData) => {
-          if (err) return sendError(res, err);
+          if (err) return renderErrorPage(res, err);
 
           syncData.completed = completedData; // add completed tasks
 
@@ -120,16 +122,16 @@ function exportData(res, token, format) {
             try {
               csvParser.json2csv(replaceCommas(syncData.items), (err, csv) => {
                 if (err) {
-                  return sendError(res, "CSV export error.");
+                  return renderErrorPage(res, "CSV export error.");
                 }
                 res.attachment("todoist.csv");
                 res.send(csv);
               });
             } catch (err) {
-              return sendError(res, "CSV export error.");
+              return renderErrorPage(res, "CSV export error.");
             }
           } else {
-            return sendError(res, "Unknown format: " + format);
+            return renderErrorPage(res, "Unknown format: " + format);
           }
         }
       );
@@ -154,21 +156,9 @@ app.get("*", function(req, res) {
   res.redirect(subdirectory);
 });
 
-if (app.get("env") === "development") {
-  app.use(function(err, req, res) {
-    res.status(err.status || 500);
-    res.render("error", {
-      message: err.message,
-      error: err
-    });
-  });
-}
-
-app.use(function(err, req, res) {
-  res.status(err.status || 500);
-  res.render("error", {
-    message: err.message
-  });
+/* Override default express error handling*/
+app.use((error, req, res, next) => {
+  renderErrorPage(res, error.message, IS_PRODUCTION ? undefined : error);
 });
 
 module.exports = app;
