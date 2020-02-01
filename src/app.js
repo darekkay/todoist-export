@@ -38,14 +38,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(subdirectory, express.static(path.join(__dirname, "..", "public")));
 
-app.get(subdirectory + "/", (req, res) => {
+app.get(`${subdirectory}/`, (req, res) => {
   res.render("index", {});
 });
 
 function call(api, parameters, callback) {
   request.post(
     {
-      url: "https://todoist.com/API/v8/" + api,
+      url: `https://todoist.com/API/v8/${api}`,
       form: parameters,
       json: true
     },
@@ -61,7 +61,7 @@ const renderErrorPage = (res, message, error) => {
   });
 };
 
-app.post(subdirectory + "/auth", (req, res) => {
+app.post(`${subdirectory}/auth`, (req, res) => {
   const format = req.body.format; // csv vs. json
 
   res.redirect(
@@ -72,7 +72,7 @@ app.post(subdirectory + "/auth", (req, res) => {
   );
 });
 
-app.get(subdirectory + "/export", (req, res) => {
+app.get(`${subdirectory}/export`, (req, res) => {
   const code = req.query.code;
 
   oauth2.authorizationCode
@@ -83,12 +83,12 @@ app.get(subdirectory + "/export", (req, res) => {
       const token = result["access_token"];
       const format = req.query.format;
 
-      res.redirect(subdirectory + "?token=" + token + "&format=" + format);
+      res.redirect(`${subdirectory}?token=${token}&format=${format}`);
     })
     .catch(err => renderErrorPage(res, err));
 });
 
-app.get(subdirectory + "/download", (req, res) => {
+app.get(`${subdirectory}/download`, (req, res) => {
   exportData(res, req.query.token, req.query.format);
 });
 
@@ -131,7 +131,7 @@ function exportData(res, token, format) {
               return renderErrorPage(res, "CSV export error.");
             }
           } else {
-            return renderErrorPage(res, "Unknown format: " + format);
+            return renderErrorPage(res, `Unknown format: ${format}`);
           }
         }
       );
@@ -145,8 +145,8 @@ function replaceCommas(items) {
     if (items.hasOwnProperty(key)) {
       const item = items[key];
       // surround columns containing comma values with quotes
-      item["labels"] = '"' + item["labels"].toString() + '"';
-      item["content"] = '"' + item["content"].toString() + '"';
+      item["labels"] = `"${item["labels"].toString()}"`;
+      item["content"] = `"${item["content"].toString()}"`;
     }
   }
   return items;

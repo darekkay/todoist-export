@@ -38,6 +38,6 @@ ssl: {
 
 ## License
 
-Copyright 2014-2019 Darek Kay <hello@darekkay.com>
+Copyright 2014-2020 Darek Kay <hello@darekkay.com>
 
 This project and its contents are open source under the [MIT license](LICENSE).
