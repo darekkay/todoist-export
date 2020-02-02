@@ -4,13 +4,13 @@
   "version": "1.2.0",
   "author": "Darek Kay <hello@darekkay.com> (https://darekkay.com/)",
   "dependencies": {
+    "axios": "^0.19.2",
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.4",
     "express": "4.17.1",
     "json-2-csv": "3.5.5",
     "morgan": "1.9.1",
     "pug": "2.0.4",
-    "request": "2.88.0",
     "simple-oauth2": "2.2.1"
   },
   "devDependencies": {

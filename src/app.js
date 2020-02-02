@@ -1,12 +1,13 @@
-const config = require("./config");
+const path = require("path");
 
 const express = require("express");
-const path = require("path");
-const logger = require("morgan");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const request = require("request");
+const logger = require("morgan");
+const axios = require("axios");
 const csvParser = require("json-2-csv");
+
+const config = require("./config");
 
 const oauth2 = require("simple-oauth2").create({
   client: {
@@ -42,16 +43,14 @@ app.get(`${subdirectory}/`, (req, res) => {
   res.render("index", {});
 });
 
-function call(api, parameters, callback) {
-  request.post(
-    {
-      url: `https://todoist.com/API/v8/${api}`,
-      form: parameters,
-      json: true
-    },
-    callback
-  );
-}
+const callApi = async (api, parameters) => {
+  const response = await axios({
+    method: "post",
+    url: `https://todoist.com/API/v8/${api}`,
+    data: parameters
+  });
+  return response.data;
+};
 
 const renderErrorPage = (res, message, error) => {
   res.status((error && error.status) || 500);
@@ -72,74 +71,22 @@ app.post(`${subdirectory}/auth`, (req, res) => {
   );
 });
 
-app.get(`${subdirectory}/export`, (req, res) => {
-  const code = req.query.code;
+app.get(`${subdirectory}/export`, async (req, res) => {
+  try {
+    const authResponse = await oauth2.authorizationCode.getToken({
+      code: req.query.code
+    });
 
-  oauth2.authorizationCode
-    .getToken({
-      code: code
-    })
-    .then(result => {
-      const token = result["access_token"];
-      const format = req.query.format;
+    const token = authResponse["access_token"];
+    const format = req.query.format;
 
-      res.redirect(`${subdirectory}?token=${token}&format=${format}`);
-    })
-    .catch(err => renderErrorPage(res, err));
+    res.redirect(`${subdirectory}?token=${token}&format=${format}`);
+  } catch (error) {
+    renderErrorPage(res, error);
+  }
 });
 
-app.get(`${subdirectory}/download`, (req, res) => {
-  exportData(res, req.query.token, req.query.format);
-});
-
-function exportData(res, token, format) {
-  call(
-    "sync",
-    {
-      token: token,
-      sync_token: "*",
-      resource_types: '["all"]'
-    },
-    (err, http, syncData) => {
-      if (err) return renderErrorPage(res, err);
-      if (syncData === undefined) {
-        console.error("Could not fetch data from Todoist.");
-        return renderErrorPage(res, "Could not fetch data from Todoist.");
-      }
-
-      call(
-        "completed/get_all",
-        { token: token },
-        (err, http, completedData) => {
-          if (err) return renderErrorPage(res, err);
-
-          syncData.completed = completedData; // add completed tasks
-
-          if (format === "json") {
-            res.attachment("todoist.json");
-            res.json(syncData);
-          } else if (format === "csv") {
-            try {
-              csvParser.json2csv(replaceCommas(syncData.items), (err, csv) => {
-                if (err) {
-                  return renderErrorPage(res, "CSV export error.");
-                }
-                res.attachment("todoist.csv");
-                res.send(csv);
-              });
-            } catch (err) {
-              return renderErrorPage(res, "CSV export error.");
-            }
-          } else {
-            return renderErrorPage(res, `Unknown format: ${format}`);
-          }
-        }
-      );
-    }
-  );
-}
-
-function replaceCommas(items) {
+const escapeCommas = items => {
   // TODO: convert label ids to names
   for (const key in items) {
     if (items.hasOwnProperty(key)) {
@@ -150,9 +97,52 @@ function replaceCommas(items) {
     }
   }
   return items;
-}
+};
 
-app.get("*", function(req, res) {
+const exportData = async (res, token, format) => {
+  const syncData = await callApi("sync", {
+    token: token,
+    sync_token: "*",
+    resource_types: '["all"]'
+  });
+
+  if (syncData === undefined) {
+    console.error("Could not fetch data from Todoist.");
+    return renderErrorPage(res, "Could not fetch data from Todoist.");
+  }
+
+  const completedData = await callApi("completed/get_all", { token: token });
+  syncData.completed = completedData; // add completed tasks
+
+  if (format === "json") {
+    res.attachment("todoist.json");
+    res.json(syncData);
+  } else if (format === "csv") {
+    try {
+      csvParser.json2csv(escapeCommas(syncData.items), (error, csv) => {
+        if (error) {
+          return renderErrorPage(res, "CSV export error.", error);
+        }
+        res.attachment("todoist.csv");
+        res.send(csv);
+      });
+    } catch (error) {
+      return renderErrorPage(res, "CSV export error.", error);
+    }
+  } else {
+    return renderErrorPage(res, `Unknown format: ${format}`);
+  }
+};
+
+app.get(`${subdirectory}/download`, async (req, res) => {
+  try {
+    await exportData(res, req.query.token, req.query.format);
+  } catch (error) {
+    return renderErrorPage(res, "Unexpected error.", error);
+  }
+});
+
+app.get("*", (req, res) => {
   res.redirect(subdirectory);
 });
 
