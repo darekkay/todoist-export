@@ -86,17 +86,12 @@ app.get(`${subdirectory}/export`, async (req, res) => {
   }
 });
 
-const escapeCommas = items => {
-  for (const key in items) {
-    if (items.hasOwnProperty(key)) {
-      const item = items[key];
-      // surround columns containing comma values with quotes
-      item["labels"] = `"${item["labels"].toString()}"`;
-      item["content"] = `"${item["content"].toString()}"`;
-    }
-  }
-  return items;
-};
+const escapeCommas = syncData =>
+  syncData.items.map(item => ({
+    ...item,
+    labels: `"${item.labels.toString()}"`,
+    content: `"${item.content.toString()}"`
+  }));
 
 /* Convert label IDs into their corresponding names */
 const convertLabelNames = syncData => {
@@ -127,7 +122,10 @@ const convertProjectNames = syncData => {
 /* Convert user IDs into their corresponding names */
 const convertUserNames = syncData => {
   const userNames = syncData.collaborators.reduce(
-    (acc, collaborator) => ({ ...acc, [collaborator.id]: collaborator.full_name }),
+    (acc, collaborator) => ({
+      ...acc,
+      [collaborator.id]: collaborator.full_name
+    }),
     {}
   );
 
@@ -135,7 +133,7 @@ const convertUserNames = syncData => {
     ...item,
     assigned_by_uid: userNames[item.assigned_by_uid] || null,
     added_by_uid: userNames[item.added_by_uid] || null,
-    user_id: userNames[item.user_id] || null,
+    user_id: userNames[item.user_id] || null
   }));
 };
 
@@ -156,15 +154,15 @@ const exportData = async (res, token, format) => {
 
   if (format === "json") {
     res.attachment("todoist.json");
-    res.json(syncData);
+    await res.json(syncData);
   } else if (format === "csv") {
-
     syncData.items = convertProjectNames(syncData);
     syncData.items = convertLabelNames(syncData);
     syncData.items = convertUserNames(syncData);
+    syncData.items = escapeCommas(syncData);
 
     try {
-      csvParser.json2csv(escapeCommas(syncData.items), (error, csv) => {
+      csvParser.json2csv(syncData.items, (error, csv) => {
         if (error) {
           return renderErrorPage(res, "CSV export error.", error);
         }
