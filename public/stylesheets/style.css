@@ -33,7 +33,7 @@ a {
   text-decoration: none;
 }
 
-a:hover {
+a:not(.unstyled):hover {
   text-decoration: underline;
 }
 
@@ -108,6 +108,12 @@ footer > * {
 .inverted a:hover,
 .inverted a:visited {
   color: #ff9e07;
+}
+
+a.unstyled,
+a.unstyled:hover,
+a.unstyled:visited {
+  color: inherit;
 }
 
 .form-wrapper {
