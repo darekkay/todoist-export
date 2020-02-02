@@ -87,7 +87,6 @@ app.get(`${subdirectory}/export`, async (req, res) => {
 });
 
 const escapeCommas = items => {
-  // TODO: convert label ids to names
   for (const key in items) {
     if (items.hasOwnProperty(key)) {
       const item = items[key];
@@ -97,6 +96,47 @@ const escapeCommas = items => {
     }
   }
   return items;
+};
+
+/* Convert label IDs into their corresponding names */
+const convertLabelNames = syncData => {
+  const labelNames = syncData.labels.reduce(
+    (acc, label) => ({ ...acc, [label.id]: label.name }),
+    {}
+  );
+
+  return syncData.items.map(item => ({
+    ...item,
+    labels: item.labels.map(labelId => labelNames[labelId])
+  }));
+};
+
+/* Convert project IDs into their corresponding names */
+const convertProjectNames = syncData => {
+  const projectNames = syncData.projects.reduce(
+    (acc, project) => ({ ...acc, [project.id]: project.name }),
+    {}
+  );
+
+  return syncData.items.map(item => ({
+    ...item,
+    project_id: projectNames[item.project_id]
+  }));
+};
+
+/* Convert user IDs into their corresponding names */
+const convertUserNames = syncData => {
+  const userNames = syncData.collaborators.reduce(
+    (acc, collaborator) => ({ ...acc, [collaborator.id]: collaborator.full_name }),
+    {}
+  );
+
+  return syncData.items.map(item => ({
+    ...item,
+    assigned_by_uid: userNames[item.assigned_by_uid] || null,
+    added_by_uid: userNames[item.added_by_uid] || null,
+    user_id: userNames[item.user_id] || null,
+  }));
 };
 
 const exportData = async (res, token, format) => {
@@ -118,6 +158,11 @@ const exportData = async (res, token, format) => {
     res.attachment("todoist.json");
     res.json(syncData);
   } else if (format === "csv") {
+
+    syncData.items = convertProjectNames(syncData);
+    syncData.items = convertLabelNames(syncData);
+    syncData.items = convertUserNames(syncData);
+
     try {
       csvParser.json2csv(escapeCommas(syncData.items), (error, csv) => {
         if (error) {
