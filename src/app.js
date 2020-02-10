@@ -56,7 +56,7 @@ const renderErrorPage = (res, message, error) => {
   res.status((error && error.status) || 500);
   res.render("error", {
     message,
-    error
+    error: IS_PRODUCTION ? undefined : error
   });
 };
 
@@ -181,7 +181,7 @@ app.get(`${subdirectory}/download`, async (req, res) => {
   try {
     await exportData(res, req.query.token, req.query.format);
   } catch (error) {
-    return renderErrorPage(res, "Unexpected error.", error);
+    return renderErrorPage(res, error.message || "Unexpected error.", error);
   }
 });
 
@@ -191,7 +191,7 @@ app.get("*", (req, res) => {
 
 /* Override default express error handling*/
 app.use((error, req, res, next) => {
-  renderErrorPage(res, error.message, IS_PRODUCTION ? undefined : error);
+  renderErrorPage(res, error.message, error);
 });
 
 module.exports = app;
