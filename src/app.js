@@ -149,7 +149,10 @@ const exportData = async (res, token, format) => {
     return renderErrorPage(res, "Could not fetch data from Todoist.");
   }
 
-  const completedData = await callApi("completed/get_all", { token: token });
+  // Fetch completed tasks (premium-only)
+  const completedData = syncData.user.is_premium
+    ? await callApi("completed/get_all", { token: token })
+    : undefined;
   syncData.completed = completedData; // add completed tasks
 
   if (format === "json") {
