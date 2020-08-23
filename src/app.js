@@ -77,7 +77,7 @@ const renderErrorPage = (res, message, error) => {
 };
 
 app.post(`${subdirectory}/auth`, (req, res) => {
-  const format = req.body.format; // csv vs. json
+  const format = req.body.format || "json"; // csv vs. json
 
   res.redirect(
     oauth2.authorizationCode.authorizeURL({
@@ -88,13 +88,17 @@ app.post(`${subdirectory}/auth`, (req, res) => {
 });
 
 app.get(`${subdirectory}/export`, async (req, res) => {
+  if (!req.query.code) {
+    return renderErrorPage(res, "Parameter missing: code", { status: 400 })
+  }
+
   try {
     const authResponse = await oauth2.authorizationCode.getToken({
       code: req.query.code
     });
 
     const token = authResponse["access_token"];
-    const format = req.query.format;
+    const format = req.query.format || "json";
 
     res.redirect(`${subdirectory}?token=${token}&format=${format}`);
   } catch (error) {
