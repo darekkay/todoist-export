@@ -3,7 +3,8 @@ const path = require("path");
 const express = require("express");
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
-const logger = require("morgan");
+const morgan = require("morgan");
+const logger = require("@darekkay/logger");
 const axios = require("axios");
 const csvParser = require("json-2-csv");
 
@@ -33,7 +34,21 @@ app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 app.set("json spaces", 2); // prettify json output
 
-app.use(logger("dev"));
+const skipLogsFor = [
+  "/js/",
+  "/stylesheets/",
+  "favicon.ico",
+  "favicon-192.png",
+  "manifest.json"
+];
+
+app.use(
+  morgan(":method :url :status", {
+    skip: function(request) {
+      return skipLogsFor.some(part => request.originalUrl.indexOf(part) !== -1);
+    }
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -53,6 +68,7 @@ const callApi = async (api, parameters) => {
 };
 
 const renderErrorPage = (res, message, error) => {
+  logger.error(error || message);
   res.status((error && error.status) || 500);
   res.render("error", {
     message,
@@ -145,7 +161,6 @@ const exportData = async (res, token, format) => {
   });
 
   if (syncData === undefined) {
-    console.error("Could not fetch data from Todoist.");
     return renderErrorPage(res, "Could not fetch data from Todoist.");
   }
 
