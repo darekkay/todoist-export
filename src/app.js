@@ -157,7 +157,7 @@ const convertUserNames = syncData => {
   }));
 };
 
-const exportData = async (res, token, format) => {
+const exportData = async (res, token, format = "csv") => {
   const syncData = await callApi("sync", {
     token: token,
     sync_token: "*",
@@ -194,8 +194,6 @@ const exportData = async (res, token, format) => {
     } catch (error) {
       return renderErrorPage(res, "CSV export error.", error);
     }
-  } else {
-    return renderErrorPage(res, `Unknown format: ${format}`);
   }
 };
 
