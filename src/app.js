@@ -68,7 +68,7 @@ const callApi = async (api, parameters) => {
 };
 
 const renderErrorPage = (res, message, error) => {
-  logger.error(error || message);
+  logger.error((error && error.message ? error.message : error) || message);
   res.status((error && error.status) || 500);
   res.render("error", {
     message,
@@ -89,7 +89,7 @@ app.post(`${subdirectory}/auth`, (req, res) => {
 
 app.get(`${subdirectory}/export`, async (req, res) => {
   if (!req.query.code) {
-    return renderErrorPage(res, "Parameter missing: code", { status: 400 })
+    return renderErrorPage(res, "Parameter missing: code", { status: 400 });
   }
 
   try {
