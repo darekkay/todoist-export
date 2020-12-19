@@ -28,4 +28,16 @@ window.onload = function() {
     ).innerText = persistentBackupUrl;
     window.location.replace(persistentBackupUrl);
   }
+
+  updateArchived(this);
 };
+
+function updateArchived(sender) { 
+  var archived = document.getElementById("archivedCbox");
+  if (document.getElementById("formatJSON").checked) {
+    archived.disabled = false;
+  } else {
+    archived.disabled = true;
+    archived.checked = false;
+  }
+}
