@@ -19,12 +19,20 @@ block content
           div.radios
             div.radio
               label
-                input(type="radio", name="format", id="formatCSV", value="csv", checked="checked")
+                input(type="radio", name="format", id="formatCSV", value="csv", checked="checked" onchange="updateArchived(this)")
                 | CSV (only tasks)
             div.radio
               label
-                input(type="radio", name="format", id="formatJSON", value="json")
+                input(type="radio", name="format", id="formatJSON", value="json", onchange="updateArchived(this)")
                 | JSON (all data)
+        div.form-group#archived
+          label(for="archived")
+            strong Archived:
+          div.checkbox
+            label
+              input(type="checkbox", name="archived", id="archivedCbox")
+              | Export all
+              | (requires Todoist Premium and may take several minutes)
 
         div.text-center
           button#submit(type="submit")
@@ -41,6 +49,7 @@ block content
     h2 Changelog
 
     ul
+      li <strong>2021-02-15</strong>: Option to export all archived tasks and projects.
       li <strong>2020-02-02</strong>: The CSV format contains translated label, project and user names (instead of ID numbers).
       li <strong>2019-06-18</strong>: Updated to <a href="https://developer.todoist.com/sync/v8/#migration-guide" target="_blank" rel="noopener">API v8</a>. The output file schema has changed a little bit.
       li <strong>2016-09-01</strong>: Updated to API v7.
