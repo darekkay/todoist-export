@@ -2,14 +2,13 @@
 # yarn lockfile v1
 
 
-"@darekkay/logger@1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@darekkay/logger/-/logger-1.0.2.tgz#8981f9cfb7b3bb6a27563148eecc1ccdb778f336"
-  integrity sha512-ojA4gw1DjdtbzJTFPkJzi+S8pgpGOe2JHtSF3ktM3ZMN12hfBTB/RKqhh4KFMb+hrvW9aXSmOCHz7XBCNC7S7w==
+"@darekkay/logger@1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@darekkay/logger/-/logger-1.1.2.tgz#844f2dada4de0115c4873b8c34c117744cf4a6e4"
+  integrity sha512-rECZz6Wh7qdA3G5SSvb+TR1GtjfQCxqG/Q0F6WE1cylf4UdQx7Nae9wGGiNCtg9j0APMyLwzM26cWFD8UpyVuA==
   dependencies:
-    kleur "4.0.2"
     log-symbols "4.0.0"
-    loglevel "1.6.8"
+    loglevel "1.7.1"
 
 "@types/babel-types@*", "@types/babel-types@^7.0.0":
   version "7.0.7"
@@ -546,11 +545,6 @@ kind-of@^3.0.2:
   dependencies:
     is-buffer "^1.1.5"
 
-kleur@4.0.2:
-  version "4.0.2"
-  resolved "https://registry.yarnpkg.com/kleur/-/kleur-4.0.2.tgz#57b36cc5235601f824c33e6e45db10cd5493dbf5"
-  integrity sha512-FGCCxczbrZuF5CtMeO0xfnjhzkVZSXfcWK90IPLucDWZwskrpYN7pmRIgvd8muU0mrPrzy4A2RBGuwCjLHI+nw==
-
 lazy-cache@^1.0.3:
   version "1.0.4"
   resolved "https://registry.yarnpkg.com/lazy-cache/-/lazy-cache-1.0.4.tgz#a1d78fc3a50474cb80845d3b3b6e1da49a446e8e"
@@ -568,10 +562,10 @@ log-symbols@4.0.0:
   dependencies:
     chalk "^4.0.0"
 
-loglevel@1.6.8:
-  version "1.6.8"
-  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.6.8.tgz#8a25fb75d092230ecd4457270d80b54e28011171"
-  integrity sha512-bsU7+gc9AJ2SqpzxwU3+1fedl8zAntbtC5XYlt3s2j1hJcn2PsXSmgN8TaLG/J1/2mod4+cE/3vNL70/c1RNCA==
+loglevel@1.7.1:
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/loglevel/-/loglevel-1.7.1.tgz#005fde2f5e6e47068f935ff28573e125ef72f197"
+  integrity sha512-Hesni4s5UkWkwCGJMQGAh71PaLUmKFM60dHvq0zi/vDhhrzuk+4GgNbTXJ12YYQJn6ZKBDNIjYcuQGKudvqrIw==
 
 longest@^1.0.1:
   version "1.0.1"
