@@ -65,7 +65,7 @@ app.get(`${subdirectory}/`, (req, res) => {
 const callApi = async (api, parameters) => {
   const response = await axios({
     method: "post",
-    url: `https://todoist.com/API/v8/${api}`,
+    url: `https://todoist.com/API/v9/${api}`,
     data: parameters,
   });
   return response.data;
