@@ -13,16 +13,16 @@ const config = require("./config");
 const oauth2 = require("simple-oauth2").create({
   client: {
     id: config.client_id,
-    secret: config.client_secret
+    secret: config.client_secret,
   },
   auth: {
     tokenHost: "https://todoist.com",
     tokenPath: "/oauth/access_token",
-    authorizePath: "/oauth/authorize"
+    authorizePath: "/oauth/authorize",
   },
   options: {
-    authorizationMethod: "body"
-  }
+    authorizationMethod: "body",
+  },
 });
 
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
@@ -41,14 +41,16 @@ const skipLogsFor = [
   "/stylesheets/",
   "favicon.ico",
   "favicon-192.png",
-  "manifest.json"
+  "manifest.json",
 ];
 
 app.use(
   morgan(":method :url :status", {
-    skip: function(request) {
-      return skipLogsFor.some(part => request.originalUrl.indexOf(part) !== -1);
-    }
+    skip: function (request) {
+      return skipLogsFor.some(
+        (part) => request.originalUrl.indexOf(part) !== -1
+      );
+    },
   })
 );
 app.use(bodyParser.json());
@@ -64,7 +66,7 @@ const callApi = async (api, parameters) => {
   const response = await axios({
     method: "post",
     url: `https://todoist.com/API/v8/${api}`,
-    data: parameters
+    data: parameters,
   });
   return response.data;
 };
@@ -74,20 +76,20 @@ const renderErrorPage = (res, message, error) => {
   res.status((error && error.status) || 500);
   res.render("error", {
     message,
-    error: IS_PRODUCTION ? undefined : error
+    error: IS_PRODUCTION ? undefined : error,
   });
 };
 
 app.post(`${subdirectory}/auth`, (req, res) => {
   var format = req.body.format || "json"; // csv vs. json
   if (req.body.archived) {
-      format += FORMAT_SUFFIX_INCLUDE_ARCHIVED;
+    format += FORMAT_SUFFIX_INCLUDE_ARCHIVED;
   }
 
   res.redirect(
     oauth2.authorizationCode.authorizeURL({
       scope: "data:read",
-      state: format
+      state: format,
     })
   );
 });
@@ -99,7 +101,7 @@ app.get(`${subdirectory}/export`, async (req, res) => {
 
   try {
     const authResponse = await oauth2.authorizationCode.getToken({
-      code: req.query.code
+      code: req.query.code,
     });
 
     const token = authResponse["access_token"];
@@ -111,60 +113,67 @@ app.get(`${subdirectory}/export`, async (req, res) => {
   }
 });
 
-const escapeCommas = syncData =>
-  syncData.items.map(item => ({
+const escapeCommas = (syncData) =>
+  syncData.items.map((item) => ({
     ...item,
     labels: `"${item.labels.toString()}"`,
-    content: `"${item.content.toString()}"`
+    content: `"${item.content.toString()}"`,
   }));
 
 /* Convert label IDs into their corresponding names */
-const convertLabelNames = syncData => {
+const convertLabelNames = (syncData) => {
   const labelNames = syncData.labels.reduce(
     (acc, label) => ({ ...acc, [label.id]: label.name }),
     {}
   );
 
-  return syncData.items.map(item => ({
+  return syncData.items.map((item) => ({
     ...item,
-    labels: item.labels.map(labelId => labelNames[labelId])
+    labels: item.labels.map((labelId) => labelNames[labelId]),
   }));
 };
 
 /* Convert project IDs into their corresponding names */
-const convertProjectNames = syncData => {
+const convertProjectNames = (syncData) => {
   const projectNames = syncData.projects.reduce(
     (acc, project) => ({ ...acc, [project.id]: project.name }),
     {}
   );
 
-  return syncData.items.map(item => ({
+  return syncData.items.map((item) => ({
     ...item,
-    project_id: projectNames[item.project_id]
+    project_id: projectNames[item.project_id],
   }));
 };
 
 /* Convert user IDs into their corresponding names */
-const convertUserNames = syncData => {
+const convertUserNames = (syncData) => {
   const userNames = syncData.collaborators.reduce(
     (acc, collaborator) => ({
       ...acc,
-      [collaborator.id]: collaborator.full_name
+      [collaborator.id]: collaborator.full_name,
     }),
     {}
   );
 
-  return syncData.items.map(item => ({
+  return syncData.items.map((item) => ({
     ...item,
     assigned_by_uid: userNames[item.assigned_by_uid] || null,
     added_by_uid: userNames[item.added_by_uid] || null,
-    user_id: userNames[item.user_id] || null
+    user_id: userNames[item.user_id] || null,
   }));
 };
 
-const fetchCompleted = async function(token, offset = 0) {
-  const page = await callApi("completed/get_all", { token: token, limit: COMPL_MAX_PAGE_SIZE, offset: offset })
-  if (page.items.length == COMPL_MAX_PAGE_SIZE || Object.keys(page.projects).length == COMPL_MAX_PAGE_SIZE) {
+const fetchCompleted = async function (token, offset = 0) {
+  const page = await callApi("completed/get_all", {
+    token: token,
+    limit: COMPL_MAX_PAGE_SIZE,
+    offset: offset,
+  });
+  if (
+    page.items.length == COMPL_MAX_PAGE_SIZE ||
+    Object.keys(page.projects).length == COMPL_MAX_PAGE_SIZE
+  ) {
     const remainder = await fetchCompleted(token, offset + COMPL_MAX_PAGE_SIZE);
     return {
       items: page.items.concat(remainder.items),
@@ -179,7 +188,7 @@ const exportData = async (res, token, format = "csv") => {
   const syncData = await callApi("sync", {
     token: token,
     sync_token: "*",
-    resource_types: '["all"]'
+    resource_types: '["all"]',
   });
 
   if (syncData === undefined) {
@@ -188,11 +197,14 @@ const exportData = async (res, token, format = "csv") => {
 
   // Fetch completed tasks (premium-only)
   if (format.includes(FORMAT_SUFFIX_INCLUDE_ARCHIVED)) {
-      if (!syncData.user.is_premium) {
-          return renderErrorPage(res, "Must be Todoist Premium to export archived items.");
-      }
-      format = format.replace(FORMAT_SUFFIX_INCLUDE_ARCHIVED, '');
-      syncData.completed = await fetchCompleted(token);
+    if (!syncData.user.is_premium) {
+      return renderErrorPage(
+        res,
+        "Must be Todoist Premium to export archived items."
+      );
+    }
+    format = format.replace(FORMAT_SUFFIX_INCLUDE_ARCHIVED, "");
+    syncData.completed = await fetchCompleted(token);
   }
 
   if (format === "json") {

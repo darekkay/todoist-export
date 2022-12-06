@@ -1,9 +1,9 @@
-window.onload = function() {
+window.onload = function () {
   var params = {};
   location.search
     .substr(1)
     .split("&")
-    .forEach(function(item) {
+    .forEach(function (item) {
       var pair = item.split("="),
         key = pair[0],
         value = pair[1] && decodeURIComponent(pair[1]);
@@ -23,16 +23,15 @@ window.onload = function() {
       "&format=" +
       params.format;
     document.querySelector("#persistentBackupUrl").href = persistentBackupUrl;
-    document.querySelector(
-      "#persistentBackupUrl"
-    ).innerText = persistentBackupUrl;
+    document.querySelector("#persistentBackupUrl").innerText =
+      persistentBackupUrl;
     window.location.replace(persistentBackupUrl);
   }
 
   updateArchived(this);
 };
 
-function updateArchived(sender) { 
+function updateArchived(sender) {
   var archived = document.getElementById("archivedCbox");
   if (document.getElementById("formatJSON").checked) {
     archived.disabled = false;

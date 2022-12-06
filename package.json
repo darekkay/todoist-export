@@ -5,7 +5,7 @@
   "author": "Darek Kay <hello@darekkay.com> (https://darekkay.com/)",
   "dependencies": {
     "@darekkay/logger": "1.1.2",
-    "axios": "^0.19.2",
+    "axios": "0.19.2",
     "body-parser": "1.19.0",
     "cookie-parser": "1.4.4",
     "express": "4.17.1",
@@ -15,7 +15,7 @@
     "simple-oauth2": "2.2.1"
   },
   "devDependencies": {
-    "prettier": "1.18.2"
+    "prettier": "2.8.0"
   },
   "homepage": "https://darekkay.com/todoist-export/",
   "license": "MIT",
