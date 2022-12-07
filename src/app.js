@@ -29,6 +29,32 @@ const IS_PRODUCTION = process.env.NODE_ENV === "production";
 const COMPL_MAX_PAGE_SIZE = 200;
 const FORMAT_SUFFIX_INCLUDE_ARCHIVED = "_all";
 
+// Enable to debug Todoist API calls
+const IS_AXIOS_TRACING_ACTIVE = false;
+
+if (IS_AXIOS_TRACING_ACTIVE) {
+  // Log axios requests
+  axios.interceptors.request.use(function (config) {
+    logger.log({
+      url: config.url,
+      method: config.method,
+      data: config.data,
+    });
+    return config;
+  });
+
+  // Log axios response errors
+  axios.interceptors.response.use(undefined, function (error) {
+    logger.error({
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      config: error.response?.config,
+      data: error.response?.data,
+    });
+    return Promise.reject(error);
+  });
+}
+
 const app = express();
 const subdirectory = "/todoist-export";
 
@@ -165,19 +191,27 @@ const convertUserNames = (syncData) => {
 };
 
 const fetchCompleted = async function (token, offset = 0) {
-  const page = await callApi("completed/get_all", {
-    token: token,
-    limit: COMPL_MAX_PAGE_SIZE,
-    offset: offset,
-  });
-  if (
-    page.items.length == COMPL_MAX_PAGE_SIZE ||
-    Object.keys(page.projects).length == COMPL_MAX_PAGE_SIZE
-  ) {
+  let page;
+  try {
+    page = await callApi("completed/get_all", {
+      token: token,
+      limit: COMPL_MAX_PAGE_SIZE,
+      offset: offset,
+    });
+  } catch (error) {
+    if (error.response?.data?.error_code === 22) {
+      // Todoist API doesn't return the number of all items.
+      // We paginate through the results until the first call that returns "Item not found".
+      return { items: [], projects: [], sections: [] };
+    }
+    throw error;
+  }
+  if (page.items.length === COMPL_MAX_PAGE_SIZE) {
     const remainder = await fetchCompleted(token, offset + COMPL_MAX_PAGE_SIZE);
     return {
       items: page.items.concat(remainder.items),
       projects: Object.assign({}, page.projects, remainder.projects),
+      sections: Object.assign({}, page.sections, remainder.sections),
     };
   } else {
     return page;
