@@ -199,12 +199,14 @@ const fetchCompleted = async function (token, offset = 0) {
       offset: offset,
     });
   } catch (error) {
-    if (error.response?.data?.error_code === 22) {
+    if (error.response?.data?.error_code !== 22) {
       // Todoist API doesn't return the number of all items.
-      // We paginate through the results until the first call that returns "Item not found".
-      return { items: [], projects: [], sections: [] };
+      // We paginate through the results until the first call that returns "Item not found" (error 22).
+      // In case of any other error, we log the error.
+      logger.error(error);
     }
-    throw error;
+    // Independent of the error, we return a fallback so the overall export doesn't fail.
+    return { items: [], projects: [], sections: [] };
   }
   if (page.items.length === COMPL_MAX_PAGE_SIZE) {
     const remainder = await fetchCompleted(token, offset + COMPL_MAX_PAGE_SIZE);
