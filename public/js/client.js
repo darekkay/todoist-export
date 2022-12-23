@@ -1,27 +1,18 @@
 window.onload = function () {
-  var params = {};
-  location.search
-    .substr(1)
-    .split("&")
-    .forEach(function (item) {
-      var pair = item.split("="),
-        key = pair[0],
-        value = pair[1] && decodeURIComponent(pair[1]);
-      (params[key] = params[key] || []).push(value);
-    });
+  var params = new URLSearchParams(location.search)
 
-  if (params.code) {
+  if (params.has("code")) {
     window.location.replace(
-      "/todoist-export/export?code=" + params.code + "&format=" + params.state
+      "/todoist-export/export?code=" + params.get("code") + "&format=" + params.get("state")
     );
-  } else if (params.token) {
+  } else if (params.has("token")) {
     document.querySelector("#persistentBackup").style.display = "block";
     var persistentBackupUrl =
       window.location.href.split("?")[0] +
       "download?token=" +
-      params.token +
+      params.get("token") +
       "&format=" +
-      params.format;
+      params.get("format");
     document.querySelector("#persistentBackupUrl").href = persistentBackupUrl;
     document.querySelector("#persistentBackupUrl").innerText =
       persistentBackupUrl;
