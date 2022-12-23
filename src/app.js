@@ -92,13 +92,10 @@ const callApi = async (api, parameters) => {
   const response = await axios({
     method: "post",
     headers: {
-      "Authorization": "Bearer " + parameters.token
+      Authorization: "Bearer " + parameters.token,
     },
     url: `https://todoist.com/sync/v9/${api}`,
     data: parameters,
-  }).catch((error) => {
-    console.log(error);
-    throw new Error("Error calling Todoist API", error.response.status, error.response.data);
   });
   return response.data;
 };
