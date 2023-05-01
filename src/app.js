@@ -145,22 +145,9 @@ app.get(`${subdirectory}/export`, async (req, res) => {
 const escapeCommas = (syncData) =>
   syncData.items.map((item) => ({
     ...item,
-    labels: `"${item.labels.toString()}"`,
+    labels: item.labels?.length > 0 ? `"${item.labels.join(",")}"` : null,
     content: `"${item.content.toString()}"`,
   }));
-
-/* Convert label IDs into their corresponding names */
-const convertLabelNames = (syncData) => {
-  const labelNames = syncData.labels.reduce(
-    (acc, label) => ({ ...acc, [label.id]: label.name }),
-    {}
-  );
-
-  return syncData.items.map((item) => ({
-    ...item,
-    labels: item.labels.map((labelId) => labelNames[labelId]),
-  }));
-};
 
 /* Convert project IDs into their corresponding names */
 const convertProjectNames = (syncData) => {
@@ -260,7 +247,6 @@ const exportData = async (res, token, format = "csv") => {
     await res.json(syncData);
   } else if (format === "csv") {
     syncData.items = convertProjectNames(syncData);
-    syncData.items = convertLabelNames(syncData);
     syncData.items = convertUserNames(syncData);
     syncData.items = escapeCommas(syncData);
 
