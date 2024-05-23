@@ -187,6 +187,8 @@ const fetchCompleted = async function (token, offset = 0) {
       token: token,
       limit: COMPL_MAX_PAGE_SIZE,
       offset: offset,
+      annotate_notes: true,
+      annotate_items: true,
     });
   } catch (error) {
     if (error.response) {
