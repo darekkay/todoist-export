@@ -1,10 +1,20 @@
 window.onload = function () {
   var params = new URLSearchParams(location.search)
 
+  document.querySelector("#submit").addEventListener("click", function() {
+    var checkbox = document.querySelector("#archivedCbox");
+    if (checkbox.checked) {
+      document.querySelector("#loading-text").style.display = "block";
+    }
+    document.querySelector("#loading").style.display = "block";
+  });
+
   if (params.has("code")) {
     window.location.replace(
       "/todoist-export/export?code=" + params.get("code") + "&format=" + params.get("state")
     );
+    
+    document.querySelector("#loading").style.display = "none";
   } else if (params.has("token")) {
     document.querySelector("#persistentBackup").style.display = "block";
     var persistentBackupUrl =
@@ -17,6 +27,8 @@ window.onload = function () {
     document.querySelector("#persistentBackupUrl").innerText =
       persistentBackupUrl;
     window.location.replace(persistentBackupUrl);
+
+    document.querySelector("#loading").style.display = "none";
   }
 
   updateArchived(this);

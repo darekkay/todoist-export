@@ -32,12 +32,13 @@ block content
               | Export all
               | (requires Todoist Premium and may take several minutes)
 
-        div.text-center
-          button#submit(type="submit")
-            | Authorize & Backup
+        div.text-center(style="display: flex; justify-content: center; position: relative;")
+          button#submit(type="submit") Authorize & Backup
+          span#loading.loader(style="display: none; position: absolute; left: 65%;")
 
+    div#loading-text.text-center(style="display: none;") Please be patient, your data is being fetched. This process may take a few minutes depending on the volume of data.
 
-    div.text-center(id="persistentBackup", style="display: none;")
+    div.text-center(id="persistentBackup", style="display: block;")
       p
         | To automate your backups (e.g. via a cron job), use the following link:
       a(id="persistentBackupUrl")
