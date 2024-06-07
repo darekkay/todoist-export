@@ -1,21 +1,16 @@
-window.onload = function () {
+window.onload = async function () {
   var params = new URLSearchParams(location.search)
-
-  document.querySelector("#submit").addEventListener("click", function() {
-    var checkbox = document.querySelector("#archivedCbox");
-    if (checkbox.checked) {
-      document.querySelector("#loading-text").style.display = "block";
-    }
-    document.querySelector("#loading").style.display = "block";
-  });
 
   if (params.has("code")) {
     window.location.replace(
       "/todoist-export/export?code=" + params.get("code") + "&format=" + params.get("state")
     );
-    
+
     document.querySelector("#loading").style.display = "none";
   } else if (params.has("token")) {
+    document.querySelector("#loading").style.display = "block";
+    document.querySelector("#loading-text").style.display = "block";
+
     document.querySelector("#persistentBackup").style.display = "block";
     var persistentBackupUrl =
       window.location.href.split("?")[0] +
@@ -26,7 +21,19 @@ window.onload = function () {
     document.querySelector("#persistentBackupUrl").href = persistentBackupUrl;
     document.querySelector("#persistentBackupUrl").innerText =
       persistentBackupUrl;
-    window.location.replace(persistentBackupUrl);
+
+    await fetch(persistentBackupUrl)
+      .then(response => response.blob())
+      .then(blob => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+        a.download = 'todoist backup.json';
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+      });
 
     document.querySelector("#loading").style.display = "none";
   }
