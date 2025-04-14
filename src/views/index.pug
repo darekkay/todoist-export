@@ -36,6 +36,9 @@ block content
           button#submit(type="submit")
             | Authorize & Backup
 
+    div#downloadIndicator.download-indicator(style="display: none;")
+      div.spinner
+      div.message Please be patient, your data is being fetched. This process may take a few minutes depending on the volume of data.
 
     div.text-center(id="persistentBackup", style="display: none;")
       p
@@ -54,4 +57,4 @@ block content
       li <strong>2016-09-01</strong>: Updated to API v7.
       li <strong>2014-12-11</strong>: Released this project.
 
-  script(src='js/client.js')
+  script(src='js/client.js', type="module")

@@ -1,28 +1,8 @@
-window.onload = function () {
-  var params = new URLSearchParams(location.search)
+import { handleFileDownload, showDownloadIndicator, hideDownloadIndicator } from "./download.helper.js";
+import { assembleURL } from "./url-generation.js";
 
-  if (params.has("code")) {
-    window.location.replace(
-      "/todoist-export/export?code=" + params.get("code") + "&format=" + params.get("state")
-    );
-  } else if (params.has("token")) {
-    document.querySelector("#persistentBackup").style.display = "block";
-    var persistentBackupUrl =
-      window.location.href.split("?")[0] +
-      "download?token=" +
-      params.get("token") +
-      "&format=" +
-      params.get("format");
-    document.querySelector("#persistentBackupUrl").href = persistentBackupUrl;
-    document.querySelector("#persistentBackupUrl").innerText =
-      persistentBackupUrl;
-    window.location.replace(persistentBackupUrl);
-  }
-
-  updateArchived(this);
-};
-
-function updateArchived(sender) {
+// Make updateArchived available globally for the onchange event
+window.updateArchived = function(sender) {
   var archived = document.getElementById("archivedCbox");
   if (document.getElementById("formatJSON").checked) {
     archived.disabled = false;
@@ -30,4 +10,28 @@ function updateArchived(sender) {
     archived.disabled = true;
     archived.checked = false;
   }
-}
+};
+
+window.onload = function () {
+  var params = new URLSearchParams(location.search);
+  hideDownloadIndicator();
+
+  if (params.has("code")) {
+    showDownloadIndicator();
+    window.location.replace(
+      assembleURL(params)
+    );
+  } else if (params.has("token")) {
+    handleFileDownload(params);
+  }
+
+  window.updateArchived(this);
+  
+  // Add event listener to show indicator when form is submitted
+  var form = document.querySelector("form");
+  if (form) {
+    form.addEventListener("submit", function() {
+      showDownloadIndicator();
+    });
+  }
+};

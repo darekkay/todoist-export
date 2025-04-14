@@ -183,3 +183,44 @@ button:hover {
   border: 0;
   padding: 0;
 }
+
+.download-indicator {
+  text-align: center;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  max-width: 400px;
+  background-color: #f5f8ff;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.download-indicator .spinner {
+  display: inline-block;
+  width: 4rem;
+  height: 4rem;
+  border: 3px solid rgba(51, 122, 183, 0.2);
+  border-radius: 50%;
+  border-top-color: #337ab7;
+  -webkit-animation: spin 1s linear infinite;
+  -moz-animation: spin 1s linear infinite;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@-webkit-keyframes spin {
+  to { -webkit-transform: rotate(360deg); }
+}
+
+@-moz-keyframes spin {
+  to { -moz-transform: rotate(360deg); }
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.download-indicator .message {
+  color: #337ab7;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
