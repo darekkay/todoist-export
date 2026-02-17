@@ -16,7 +16,7 @@ const oauth2 = require("simple-oauth2").create({
     secret: config.client_secret,
   },
   auth: {
-    tokenHost: "https://todoist.com",
+    tokenHost: "https://app.todoist.com",
     tokenPath: "/oauth/access_token",
     authorizePath: "/oauth/authorize",
   },
@@ -94,7 +94,7 @@ const callApi = async (api, parameters) => {
     headers: {
       Authorization: "Bearer " + parameters.token,
     },
-    url: `https://todoist.com/sync/v9/${api}`,
+    url: `https://api.todoist.com/api/v1/${api}`,
     data: parameters,
   });
   return response.data;
@@ -183,7 +183,7 @@ const convertUserNames = (syncData) => {
 const fetchCompleted = async function (token, offset = 0) {
   let page;
   try {
-    page = await callApi("completed/get_all", {
+    page = await callApi("tasks/completed", {
       token: token,
       limit: COMPL_MAX_PAGE_SIZE,
       offset: offset,
